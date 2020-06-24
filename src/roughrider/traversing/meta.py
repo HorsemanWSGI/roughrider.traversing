@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from roughrider.traversing import Namespace
+from roughrider.traversing import DEFAULT, VIEW
 
 
 class ResolveError(Exception):
@@ -54,14 +54,14 @@ class ViewLookup(Lookup):
         unconsumed_amount = len(stack)
         if unconsumed_amount == 0:
             default_fallback = True
-            ns, name = Namespace.view, default
+            ns, name = VIEW, default
         elif unconsumed_amount == 1:
             ns, name = stack[0]
         else:
             raise ResolveError(
                 "Can't resolve view: stack is not fully consumed.")
 
-        if ns not in Namespace:
+        if ns not in (DEFAULT, VIEW):
             raise ResolveError(
                 "Can't resolve view: namespace %r is not supported." % ns)
 
@@ -71,7 +71,7 @@ class ViewLookup(Lookup):
                 raise ResolveError(
                     "Can't resolve view: no default view on %r." % obj)
             else:
-                if ns == Namespace.view.value:
+                if ns == VIEW:
                     raise ResolveError(
                         "Can't resolve view: no view `%s` on %r." % (
                             name, obj))

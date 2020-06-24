@@ -1,5 +1,4 @@
-import enum
+# Namespaces
 
-class Namespace(enum.Enum):
-    default = 'default'
-    view = 'view'
+DEFAULT = 'default'
+VIEW = 'view'

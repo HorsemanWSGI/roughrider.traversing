@@ -1,4 +1,4 @@
 roughrider.traversing
 *********************
 
-Object publisher prototyping for ``horseman``, using ``reg``
+Object publisher prototyping for WSGI applications.

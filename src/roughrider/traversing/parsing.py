@@ -1,7 +1,6 @@
 import re
-import enum
 from collections import deque
-from horseman.traversing import Namespace
+from roughrider.traversing import DEFAULT
 
 
 def parse_path(path, shortcuts=None):
@@ -9,7 +8,7 @@ def parse_path(path, shortcuts=None):
     A step is a ns, name tuple.
     Namespaces can be indicated with ++foo++ at the beginning of a step,
     where 'foo' is the namespace.
-    By default, the namespace is considered to be `Namespace.default`.
+    By default, the namespace is considered to be `DEFAULT`.
     A dictionary of shortcuts can be supplied, where each key is a
     a character combination (such as '@@') that should be expanded,
     and the value is the namespace it should be expanded to (such as 'view').
@@ -36,10 +35,10 @@ def parse_path(path, shortcuts=None):
             try:
                 ns, name = step[2:].split(u'++', 1)
             except ValueError:
-                ns = Namespace.default
+                ns = DEFAULT
                 name = step
         else:
-            ns = Namespace.default
+            ns = DEFAULT
             name = step
         stack.append((ns, name))
 
@@ -61,12 +60,12 @@ def create_path(stack, shortcuts=None, default='default'):
         shortcuts = inversed_shortcuts
     path = deque()
     for ns, name in stack:
-        if ns == Namespace.default:
+        if ns == DEFAULT:
             path.append(name)
             continue
         shortcut = shortcuts.get(ns)
         if shortcut is not None:
             path.append(shortcut + name)
             continue
-        path.append('++%s++%s' % (ns, name))
+        path.append(f'++{ns}++{name}')
     return '/' + '/'.join(path)
