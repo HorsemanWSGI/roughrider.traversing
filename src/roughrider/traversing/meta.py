@@ -1,3 +1,4 @@
+from typing import Any, Optional
 from abc import ABC, abstractmethod
 from roughrider.traversing import DEFAULT, VIEW
 
@@ -78,3 +79,26 @@ class ViewLookup(Lookup):
                 raise ResolveError(
                     "%r is neither a view nor a model." % name)
         return view
+
+
+class Traverser(ABC):
+    """Prototyping of a traverser.
+    By default, it consumes only one stack element.
+    """
+
+    def __init__(self, obj: Any):
+        self.obj = obj
+
+    @abstractmethod
+    def consume(self, ns: str, name: str) -> Optional[Any]:
+        """Returns the target object
+        """
+
+    def __call__(self, consume, stack):
+        ns, name = stack.popleft()
+        next_obj = self.consume(ns, name)
+        if next_obj is None:
+            # Nothing was found, we restore the stack.
+            stack.appendleft((ns, name))
+            return False, self.obj, stack
+        return True, next_obj, stack
